@@ -31,20 +31,24 @@ public class AuthService {
             throw new RuntimeException("Username is already in use");
         }
 
+
         AuthUser authUser = new AuthUser();
+        try {
         authUser.setUsername(registerRequest.getUsername());
         authUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         authUser.setEmail(registerRequest.getEmail());
+        authRepository.save(authUser);
+
 
         Userprofile userprofile = new Userprofile();
-        userprofile.setUsername(registerRequest.getUsername());
-        userprofile.setEmail(registerRequest.getEmail());
+        userprofile.setUserId(authUser.getId());
         userprofile.setFirstName(registerRequest.getFirstName());
         userprofile.setLastName(registerRequest.getLastName());
+        userprofile.setPhone(registerRequest.getPhone());
 
-        try {
-            userClient.addUser(userprofile);
-            authRepository.save(authUser);
+
+            userClient.addUserProfile(userprofile);
+
         }catch (Exception e) {
             e.printStackTrace();
             authRepository.deleteByUsername((authUser.getUsername()));

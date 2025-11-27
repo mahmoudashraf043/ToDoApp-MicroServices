@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "UserService")
 public interface UserClient {
+
     @PostMapping("/user/")
-    ResponseEntity<Void> addUser(@RequestBody Userprofile userprofile);
+    ResponseEntity<Void> addUserProfile(@RequestBody Userprofile userprofile);
 }

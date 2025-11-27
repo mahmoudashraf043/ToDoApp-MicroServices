@@ -1,28 +1,12 @@
-package com.Mahmoud.AuthService.Model;
+package com.Mahmoud.UserService.Dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "AUTHUSER")
 public class AuthUser {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
     private String username;
 
     private String password;
 
     private String email;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;

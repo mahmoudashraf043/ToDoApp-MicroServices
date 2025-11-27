@@ -1,28 +1,22 @@
 package com.Mahmoud.AuthService.DTO;
 
 public class Userprofile {
-    String username;
+
+    Integer userId;
 
     String firstName;
 
     String lastName;
 
-    String email;
+    String phone;
 
-    public String getUsername() {
-        return username;
+
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -39,5 +33,13 @@ public class Userprofile {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

@@ -1,6 +1,7 @@
 package com.Mahmoud.AuthService.Jwt;
 
 import com.Mahmoud.AuthService.DTO.LoginResponse;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -47,6 +48,13 @@ public class JwtUtils {
     }
     public boolean isTokenValid(String token, UserDetails userDetails) {
         return extractUsername(token).equals(userDetails.getUsername());
+    }
+
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
 
