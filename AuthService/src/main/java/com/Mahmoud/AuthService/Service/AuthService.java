@@ -9,6 +9,8 @@ import com.Mahmoud.AuthService.Jwt.JwtUtils;
 import com.Mahmoud.AuthService.Model.AuthUser;
 import com.Mahmoud.AuthService.Repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class AuthService {
 
     public String register(RegisterRequest registerRequest) {
         if(authRepository.findByUsername(registerRequest.getUsername()) != null) {
-            throw new RuntimeException("Username is already in use");
+            throw new RuntimeException("Username is already used");
         }
 
 
@@ -37,24 +39,29 @@ public class AuthService {
         authUser.setUsername(registerRequest.getUsername());
         authUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         authUser.setEmail(registerRequest.getEmail());
-        authRepository.save(authUser);
+
 
 
         Userprofile userprofile = new Userprofile();
         userprofile.setUserId(authUser.getId());
+        userprofile.setUsername(registerRequest.getUsername());
+        userprofile.setEmail(registerRequest.getEmail());
         userprofile.setFirstName(registerRequest.getFirstName());
         userprofile.setLastName(registerRequest.getLastName());
         userprofile.setPhone(registerRequest.getPhone());
 
 
-            userClient.addUserProfile(userprofile);
-
+           ResponseEntity<String> response = userClient.addUserProfile(userprofile);
+           if(response.getStatusCode().is2xxSuccessful()) {
+               authRepository.save(authUser);
+               return "User registered successfully";
+           }else{
+               throw new Exception("Something went wrong with user service");
+           }
         }catch (Exception e) {
             e.printStackTrace();
-            authRepository.deleteByUsername((authUser.getUsername()));
             throw new RuntimeException("Something went wrong please try again");
         }
-        return "User has been created successfully";
     }
 
     public LoginResponse login(LoginRequest loginRequest) {

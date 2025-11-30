@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 public class UserProfile {
 
+        private Integer userId;
 
         private String username;
 
@@ -13,6 +14,16 @@ public class UserProfile {
 
         private String email;
 
+        private String phone;
+
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public String getUsername() {
             return username;
@@ -48,5 +59,13 @@ public class UserProfile {
 
         public void setLastName(String lastName) {
             this.lastName = lastName;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
         }
 }

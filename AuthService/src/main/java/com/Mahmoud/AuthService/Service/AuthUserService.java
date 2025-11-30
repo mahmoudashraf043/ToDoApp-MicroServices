@@ -1,9 +1,14 @@
 package com.Mahmoud.AuthService.Service;
 
 import com.Mahmoud.AuthService.DTO.ChangePasswordDto;
+import com.Mahmoud.AuthService.DTO.Userprofile;
+import com.Mahmoud.AuthService.FeignClient.UserClient;
 import com.Mahmoud.AuthService.Model.AuthUser;
 import com.Mahmoud.AuthService.Repository.AuthRepository;
+import feign.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +24,9 @@ public class AuthUserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserClient userClient;
 
     public String deleteUser(Integer userId) throws Exception {
         try {
@@ -95,7 +103,7 @@ public class AuthUserService {
         }
     }
 
-    public String changeUsername(String username) {
+    public String changeUsername(String username) throws Exception {
         try {
             String temp = SecurityContextHolder.getContext().getAuthentication().getName();
             AuthUser loggedInUser = authRepository.findByUsername(temp);
@@ -104,15 +112,22 @@ public class AuthUserService {
                 return "Username is already taken";
             }
             loggedInUser.setUsername(username);
-            authRepository.save(loggedInUser);
-            return "username changed";
+            Userprofile userprofile = new Userprofile();
+            userprofile.setUsername(username);
+            ResponseEntity<String> response = userClient.updateUserProfile(userprofile);
+            if(response.getStatusCode() .is2xxSuccessful()){
+                authRepository.save(loggedInUser);
+                return "email changed";
+            }else {
+                throw new Exception("Something went wrong with user service");
+            }
         }catch (Exception e){
             e.printStackTrace();
-            return "something went wrong please try again";
+            throw new Exception("Something went wrong please try again");
         }
     }
 
-    public String changeEmail(String email) {
+    public String changeEmail(String email) throws Exception {
         try{
             String temp = SecurityContextHolder.getContext().getAuthentication().getName();
             AuthUser loggedInUser = authRepository.findByUsername(temp);
@@ -120,12 +135,19 @@ public class AuthUserService {
                 return "Email is already taken";
             }
             loggedInUser.setEmail(email);
-            authRepository.save(loggedInUser);
-            return "email changed";
+            Userprofile userprofile = new Userprofile();
+            userprofile.setEmail(email);
+           ResponseEntity<String> response = userClient.updateUserProfile(userprofile);
+           if(response.getStatusCode() .is2xxSuccessful()){
+               authRepository.save(loggedInUser);
+               return "email changed";
+           }else {
+                throw new Exception("Something went wrong with user service");
+           }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "something went wrong please try again";
+            throw new Exception("Something went wrong please try again");
         }
     }
 }

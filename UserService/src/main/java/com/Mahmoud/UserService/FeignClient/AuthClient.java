@@ -1,16 +1,15 @@
 package com.Mahmoud.UserService.FeignClient;
 
 
+import com.Mahmoud.UserService.Configuration.FeignConfig;
 import com.Mahmoud.UserService.Dto.AuthUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "AuthService")
+@FeignClient(name = "AuthService" , configuration = FeignConfig.class)
 public interface AuthClient {
-    @DeleteMapping("/authUser/{username}")
-    ResponseEntity<String> deleteAuthUser(@PathVariable("username") String username);
+    @DeleteMapping("/authUser/{userId}")
+    ResponseEntity<String> deleteAuthUser(@PathVariable("userId") Integer userId);
 
-    @PutMapping("/authUser/")
-    ResponseEntity<String> updateAuthUser(@RequestBody AuthUser authUser);
 }

@@ -33,8 +33,8 @@ public class UserController {
         return new ResponseEntity<>(userService.updateUser(userProfile) , HttpStatus.OK);
     }
 
-    @DeleteMapping("/{username}")
-    public ResponseEntity<?> deleteUser(@PathVariable String username) throws Exception {
-        return new ResponseEntity<>(userService.deleteUser(username) , HttpStatus.OK);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer userId) throws Exception {
+        return new ResponseEntity<>(userService.deleteUser(userId) , HttpStatus.OK);
     }
 }

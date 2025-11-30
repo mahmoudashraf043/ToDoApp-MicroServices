@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Size;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotBlank(message = "Username is required")
@@ -23,6 +22,8 @@ public class User {
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
     private String email;
+
+    private String phone;
 
     public User() {
     }
@@ -73,5 +74,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
