@@ -72,7 +72,7 @@ public class AuthService {
         if(!passwordEncoder.matches(loginRequest.getPassword(), authUser.getPassword())) {
             throw new RuntimeException("Wrong Password");
         }
-        return jwtUtils.generateToken(authUser.getUsername() , authUser.getEmail());
+        return jwtUtils.generateToken(authUser.getUsername() , authUser.getEmail() , authUser.getId());
 
     }
 }

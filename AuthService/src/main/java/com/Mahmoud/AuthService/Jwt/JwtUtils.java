@@ -16,18 +16,19 @@ import java.util.Map;
 public class JwtUtils {
     private final String secretKey = "asjjdfhksduwefhklawufjasblasuywquoyelrugluaygfklasuhjfgahfyquiwre";
 
-    public Map<String,Object> generateClaims(String username , String email) {
+    public Map<String,Object> generateClaims(String username , String email , Integer userId) {
         Map<String,Object> claims = new HashMap<>();
         claims.put("username", username);
         claims.put("email", email);
+        claims.put("userId" , userId);
         return claims;
     }
 
-    public LoginResponse generateToken(String username, String email)
+    public LoginResponse generateToken(String username, String email , Integer userId)
     {
         LoginResponse loginResponse = new LoginResponse();
         String token = Jwts.builder()
-                .setClaims(generateClaims(username , email))
+                .setClaims(generateClaims(username , email , userId))
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))

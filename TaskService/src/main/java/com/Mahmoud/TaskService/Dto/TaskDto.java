@@ -7,6 +7,7 @@ public class TaskDto {
     String title;
     String description;
     LocalDate dueDate;
+    Integer userId;
 
     public String getTitle() {
         return title;
@@ -30,5 +31,13 @@ public class TaskDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

@@ -20,6 +20,7 @@ public class Task {
 
     private boolean completed;
 
+    private Integer userId;
 
     public Integer getId() {
         return id;
@@ -59,5 +60,13 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }
