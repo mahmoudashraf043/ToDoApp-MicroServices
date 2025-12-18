@@ -15,6 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 public class TaskService {
     @Autowired
@@ -24,18 +27,18 @@ public class TaskService {
 
     public Page<Task> getAllUnCompletedTasks(int page) {
 
-        UserDto user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDto userDto = userClient.getUser();
         Pageable pageable = PageRequest.of(page, 10 , Sort.by("dueDate").ascending());
-        return taskRepo.getAllUnCompletedTasksOfUser(user.getId() , pageable);
+        return taskRepo.getAllUnCompletedTasksOfUser(userDto.getUserId(), pageable);
     }
 
     public Page<Task> getAllCompletedTasks(int page) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDto userDto = userClient.getUser();
         Pageable pageable = PageRequest.of(page, 10 , Sort.by("dueDate").ascending());
-        return taskRepo.getAllCompletedTasksOfUser(user.getId() , pageable);
+        return taskRepo.getAllCompletedTasksOfUser(userDto.getUserId() , pageable);
     }
 
-    public Task getTaskById(int taskId) throws Exception {
+    public Task getTaskById(Integer taskId) throws Exception {
 
         return taskRepo.findByIdAndCompletedIsFalse(taskId)
                 .orElseThrow(() -> new Exception("This task does not exist anymore"));
@@ -83,7 +86,7 @@ public class TaskService {
 
     }
 
-    public String deleteTask(int id) throws Exception {
+    public String deleteTask(Integer id) throws Exception {
         try {
             Task task = taskRepo.findById(id).orElseThrow(() -> new Exception("this task is not exist anymore"));
             UserDto userDto = userClient.getUser();
@@ -96,5 +99,27 @@ public class TaskService {
             e.printStackTrace();
             throw new Exception("something went wrong please try again later");
         }
+    }
+
+    public String completeTask(Integer taskId) throws Exception {
+        try {
+            Task task = taskRepo.findById(taskId).orElseThrow(() -> new Exception("this task is not exist anymore"));
+            UserDto userDto = userClient.getUser();
+            if (task.getUserId() != userDto.getUserId()) {
+                throw new Exception("this task does not belong to this user");
+            }
+            task.setCompleted(true);
+            taskRepo.save(task);
+            return "task completed";
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("something went wrong please try again later");
+        }
+
+    }
+
+    public List<Task> getDueTomorrowTasks(Integer userId) throws Exception {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        return taskRepo.findTasksEndTomorrow(userId,tomorrow);
     }
 }

@@ -25,4 +25,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("select t from Task t where t.dueDate = :tomorrow")
     List<Task> findTasksEndTomorrow(@Param("tomorrow") LocalDate tomorrow);
+
+    @Query("select t from Task t where t.userId = :userId and t.dueDate = :tomorrow ")
+    List<Task> findTasksEndTomorrow(Integer userId, LocalDate tomorrow);
 }

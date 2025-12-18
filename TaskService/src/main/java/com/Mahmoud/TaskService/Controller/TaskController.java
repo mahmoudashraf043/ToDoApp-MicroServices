@@ -34,14 +34,23 @@ public class TaskController {
         return new ResponseEntity<>(taskService.createTask(taskDto) , HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{taskId}")
     public ResponseEntity<Task> updateTask(@PathVariable Integer taskId,@RequestBody TaskDto taskDto) throws Exception {
         return new ResponseEntity<>(taskService.updateTask(taskId ,taskDto) , HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable int id) throws Exception {
-        return new ResponseEntity<>(taskService.deleteTask(id) , HttpStatus.OK);
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<String> deleteTask(@PathVariable Integer taskId) throws Exception {
+        return new ResponseEntity<>(taskService.deleteTask(taskId) , HttpStatus.OK);
+    }
+
+    @PutMapping("/completeTask/{taskId}")
+    public ResponseEntity<String> completeTask(@PathVariable Integer taskId) throws Exception {
+        return new ResponseEntity<>(taskService.completeTask(taskId) , HttpStatus.OK);
+    }
+    @GetMapping("/due-tomorrow/{userId}")
+    public ResponseEntity<?> getDueTomorrowTasks(@PathVariable Integer userId) throws Exception {
+        return new ResponseEntity<>(taskService.getDueTomorrowTasks(userId) , HttpStatus.OK);
     }
 
 
