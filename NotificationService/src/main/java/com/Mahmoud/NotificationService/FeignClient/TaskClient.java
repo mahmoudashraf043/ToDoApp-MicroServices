@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.naming.ConfigurationException;
+import java.util.List;
 
 @FeignClient(name = "TaskService" , configuration = FeignConfig.class)
 public interface TaskClient {
 
     @GetMapping("/due-tomorrow/{userId}")
-    public TaskDto dueTomorrow(@PathVariable("userId") Integer userId);
+    public List<TaskDto> dueTomorrow(@PathVariable("userId") Integer userId);
 }

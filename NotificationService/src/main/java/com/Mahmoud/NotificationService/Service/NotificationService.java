@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,10 +26,16 @@ public class NotificationService {
 
     @Scheduled(cron = "0 0 9 * * *") // every day at 9 AM
     public void sendNotification() {
-        UserDto user = userClient.getUser();
-        TaskDto task = taskClient.dueTomorrow(user.getUserId());
+        List<TaskDto> tasks = taskClient.dueTomorrow(0);
+        for(TaskDto task : tasks) {
+            Notification notification = new Notification();
+            notification.setUserId(task.getUserId());
+            notification.setMessage("Task :" + task.getTaskName() + "   will end tomorrow");
+            notification.setSeen(false);
+            notification.setCreatedAt(LocalDateTime.now());
+            notificationRepo.save(notification);
+        }
 
-        notificationRepo.findTasksEndTomorrow(user.getUserId() , tomorrow);
     }
 
     public List<Notification> getAllNotifications() {

@@ -8,6 +8,7 @@ public class TaskDto {
     private String taskName;
     private String taskDescription;
     private LocalDateTime dueDate;
+    private Integer userId;
 
     public Integer getTaskId() {
         return taskId;
@@ -39,5 +40,12 @@ public class TaskDto {
 
     public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }
