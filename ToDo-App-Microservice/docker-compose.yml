@@ -1,0 +1,162 @@
+
+services:
+
+  # Eureka
+  eureka-server:
+    build: ./EurekaServer
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-net
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+    networks:
+      - microservices-net
+
+  # Auth Service
+  auth-mysql:
+    image: mysql:8
+    container_name: auth-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "33061:3306"
+    networks:
+      - microservices-net
+
+  auth-service:
+    build: ./AuthService
+    container_name: auth-service
+    hostname: auth-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/auth_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+       auth-mysql:
+         condition: service_healthy
+       eureka-server:
+         condition: service_started
+    networks:
+      - microservices-net
+
+  # User Service
+  user-mysql:
+    image: mysql:8
+    container_name: user-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: Mahmoud
+      MYSQL_PASSWORD: 123456789
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "33062:3306"
+    networks:
+      - microservices-net
+
+  user-service:
+    build: ./UserService
+    container_name: user-service
+    hostname: user-service
+    environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://user-mysql:3306/user_db
+        SPRING_DATASOURCE_USERNAME: Mahmoud
+        SPRING_DATASOURCE_PASSWORD: 123456789
+    depends_on:
+       user-mysql:
+         condition: service_healthy
+       eureka-server:
+         condition: service_started
+    networks:
+      - microservices-net
+
+  # Task Service
+  task-mysql:
+    image: mysql:8
+    container_name: task-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: task_db
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "33063:3306"
+    networks:
+      - microservices-net
+
+  task-service:
+    build: ./TaskService
+    container_name: task-service
+    hostname: task-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://task-mysql:3306/task_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+       task-mysql:
+         condition: service_healthy
+       eureka-server:
+         condition: service_started
+    networks:
+      - microservices-net
+
+  # Notification Service
+  notification-mysql:
+    image: mysql:8
+    container_name: notification-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: notification_db
+      MYSQL_USER: Mahmoud
+      MYSQL_PASSWORD: 123456789
+    ports:
+      - "33064:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uMahmoud", "-p123456789" ]
+      timeout: 30s
+      retries: 10
+      interval: 10s
+      start_period: 60s
+    networks:
+      - microservices-net
+
+  notification-service:
+    build: ./NotificationService
+    container_name: notification-service
+    hostname: notification-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://notification-mysql:3306/notification_db
+      SPRING_DATASOURCE_USERNAME: Mahmoud
+      SPRING_DATASOURCE_PASSWORD: 123456789
+    depends_on:
+       notification-mysql:
+         condition: service_healthy
+       eureka-server:
+         condition: service_started
+    networks:
+      - microservices-net
+networks:
+  microservices-net:
+    driver: bridge

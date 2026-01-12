@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
 
-  mysql:
+  auth-mysql:
     image: mysql:8.0
     container_name: authService_db
     environment:
@@ -10,22 +10,33 @@ services:
       MYSQL_DATABASE: auth_db
       MYSQL_USER: Mahmoud
       MYSQL_PASSWORD: 123456789
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
   auth-service:
-    build: target
-    container_name: authService-database
+    build: .
+    container_name: auth-service
     ports:
       - "8081:8080"
     depends_on:
-      - mysql
+      auth-mysql:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-mysql:3306/auth_db
       SPRING_DATASOURCE_USERNAME: Mahmoud
       SPRING_DATASOURCE_PASSWORD: 123456789
+    networks:
+      - microservices-net
 
 volumes:
   auth_data:
+networks:
+  microservices-net:
+    external: true

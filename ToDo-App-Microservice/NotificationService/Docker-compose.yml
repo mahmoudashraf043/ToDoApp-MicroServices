@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
 
-  mysql:
+  notification-mysql:
     image: mysql:8.0
     container_name: notificationService_db
     environment:
@@ -10,22 +10,33 @@ services:
       MYSQL_DATABASE: notification_db
       MYSQL_USER: Mahmoud
       MYSQL_PASSWORD: 123456789
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports:
-      - "3307:3306"
+      - "33064:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - notification_mysql_data:/var/lib/mysql
 
-  auth-service:
-    build: target
-    container_name: notificationService-database
+  notification-service:
+    build: .
+    container_name: notification-service
     ports:
       - "8084:8080"
     depends_on:
-      - mysql
+       notification-mysql:
+         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/notification_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://notification-mysql:3306/notification_db
       SPRING_DATASOURCE_USERNAME: Mahmoud
       SPRING_DATASOURCE_PASSWORD: 123456789
+    networks:
+      - microservices-net  # Add network
 
 volumes:
   notification_data:
+networks:
+  microservices-net:
+    external: true
